@@ -5,9 +5,14 @@
 from flask import Flask, request
 from werkzeug.middleware.dispatcher import DispatcherMiddleware
 from prometheus_client import make_wsgi_app, Counter, Gauge
+import duplicati_client
+import os
 
 
 app = Flask(__name__)
+
+RESULT_STATES = ["Error", "Warning", "Success"]
+#OPERATION_STATES = ["added", "deleted", "modified", "examined", "opened"]
 
 # Add prometheus wsgi middleware to route /metrics requests
 app.wsgi_app = DispatcherMiddleware(app.wsgi_app, {
@@ -24,6 +29,13 @@ def get_json_value(obj, key, default=None):
     if key in obj:
         return obj[key]
     return default
+
+
+def pre_seed_metrics(backup_name):
+    for state in RESULT_STATES:
+        result_counter.labels(backup=backup_name, result=state).inc(0)
+    # Just seeding counter for now. Can do gauges later if there's value
+
 
 @app.route('/', methods=['POST'])
 def main():
@@ -67,7 +79,20 @@ def main():
 
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0')
+
+    print("Init...")
+    duplicati_url = os.getenv("DUPLICATI_URL", None)
+    if duplicati_url is not None:
+        print("Will attempt to get backup list from Duplicati for pre-seeding metrics...")
+        duplicati = duplicati_client.Duplicati(duplicati_url)
+        for backup in duplicati.get_backup_names():
+            print("Found backup {0}. Pre-seeding metrics...".format(backup))
+            pre_seed_metrics(backup)
+    else:
+        print("DUPLICATI_URL is not set. Will skip pre-seeding metrics for each backup")
+
+    print("Init complete. Running flask...")
+    app.run(debug=True, host='0.0.0.0', port=9090)
 
 
 
