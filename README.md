@@ -7,8 +7,6 @@ In order for duplicati-prometheus-exporter to function properly, two steps need 
 1. Run the container somewhere. I've provided examples for both Kubernetes and Docker below
 2. Configure Duplicati to send a json report to the docker container after every backup
 
-### Container runtime options
-
 ###  Running in Kubernetes
 
 As kubernetes is so extensible, it's hard to give a single configuration that will work for everyone. Below is the configuration that I use for my setup. 
