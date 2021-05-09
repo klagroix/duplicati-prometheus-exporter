@@ -11,7 +11,7 @@ import os
 
 app = Flask(__name__)
 
-RESULT_STATES = ["Error", "Warning", "Success"]
+RESULT_STATES = ["Error", "Warning", "Success", "Fatal"]
 #OPERATION_STATES = ["added", "deleted", "modified", "examined", "opened"]
 
 # Add prometheus wsgi middleware to route /metrics requests
@@ -51,13 +51,15 @@ def main():
     result = get_json_value(data, 'ParsedResult')
 
     # Minimum required fields
-    if backup_name is None:
+    if backup_name is None and result is None:
         print("Invalid json. No backup name found")
         return "Invalid json. No backup name found", 400
 
-    if result is None:
-        print("Invalid json. No result found")
-        return "Invalid json. No result found", 400
+    if backup_name is not None and result is None:
+        # We may have received an exception report. Example if source file doesn't exist:
+        # {'Data': {'ClassName': 'System.IO.IOException', 'Message': 'The source folder /t does not exist, aborting backup', 'Data': None, 'InnerException': None, 'HelpURL': None, 'StackTraceString': '  at Duplicati.Library.Main.Controller.ExpandInputSources (System.String[] inputsources, Duplicati.Library.Utility.IFilter filter) [0x002c4] in <8f1de655bd1240739a78684d845cecc8>:0 \n  at Duplicati.Library.Main.Controller+<>c__DisplayClass14_0.<Backup>b__0 (Duplicati.Library.Main.BackupResults result) [0x0001d] in <8f1de655bd1240739a78684d845cecc8>:0 \n  at Duplicati.Library.Main.Controller.RunAction[T] (T result, System.String[]& paths, Duplicati.Library.Utility.IFilter& filter, System.Action`1[T] method) [0x0011c] in <8f1de655bd1240739a78684d845cecc8>:0 ', 'RemoteStackTraceString': None, 'RemoteStackIndex': 0, 'ExceptionMethod': None, 'HResult': -2146232800, 'Source': 'Duplicati.Library.Main'}, 'Extra': {'OperationName': 'Backup', 'backup-name': 'Test'}, 'LogLines': []}
+        print("We probably caught an exception. Marking this as 'Fatal' status")
+        result = "Fatal"
 
     # Save the values...
     result_counter.labels(backup=backup_name, result=result).inc()

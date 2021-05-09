@@ -118,3 +118,4 @@ To build this manually, run `docker build -t duplicati-prometheus-exporter .`
 ### TODO list:
 * Stop using debug webserver
 * Support duplicati login
+* Add example Grafana dashboard
