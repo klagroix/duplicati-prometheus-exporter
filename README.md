@@ -119,3 +119,4 @@ To build this manually, run `docker build -t duplicati-prometheus-exporter .`
 * Stop using debug webserver
 * Support duplicati login
 * Add example Grafana dashboard
+    * NOTE this prometheus issue: https://github.com/klagroix/duplicati-prometheus-exporter. Trying to exract a rate()/increase() with slowly changing data may be pretty inconsitent.
