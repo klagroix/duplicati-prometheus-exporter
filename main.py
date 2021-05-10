@@ -146,6 +146,9 @@ def main():
     files_gauge.labels(backup=backup_name, operation='opened').set(int(get_json_value(data, 'OpenedFiles', default=0)))
     files_size_gauge.labels(backup=backup_name, operation='opened').set(int(get_json_value(data, 'SizeOfOpenedFiles', default=0)))
 
+    init_gauge_callbacks(backup_name, result)
+    recent_backups[backup_name][result].append(datetime.datetime.utcnow())
+
     return 'processed', 200
 
 
