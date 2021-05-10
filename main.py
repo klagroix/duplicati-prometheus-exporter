@@ -82,7 +82,7 @@ def init_gauge_callbacks(backup_name, state):
     if backup_name not in recent_backups:
         recent_backups[backup_name] = {}
         # result_last_success_percent_gauge is at the 'backup' level
-        result_last_success_percent_gauge.labels(backup=backup_name).set_function(lambda: determine_percent(backup_name))
+        result_last_success_percent_gauge.labels(backup=backup_name).set_function(lambda: determine_success_percent(backup_name))
 
     if state not in recent_backups[backup_name]:
         recent_backups[backup_name][state] = []
