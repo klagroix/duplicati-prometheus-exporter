@@ -163,7 +163,7 @@ if __name__ == '__main__':
         print("DUPLICATI_URL is not set. Will skip pre-seeding metrics for each backup")
     
     print("Adding scheduler to call maintain_recent_backups() every {0} second(s)".format(SCHEDULED_MAINT_INTERVAL_SEC))
-    scheduler.add_job(id = 'Scheduled: Manage Recent Backups', func=manage_recent_backups, trigger="interval", seconds=SCHEDULED_MAINT_INTERVAL_SEC)
+    scheduler.add_job(id = 'Scheduled: Manage Recent Backups', func=maintain_recent_backups, trigger="interval", seconds=SCHEDULED_MAINT_INTERVAL_SEC)
     scheduler.start()
 
     print("Init complete. Running flask...")
