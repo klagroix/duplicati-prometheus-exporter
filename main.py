@@ -12,6 +12,7 @@ import datetime
 
 
 app = Flask(__name__)
+scheduler = APScheduler()
 
 STATE_ERROR = "Error"
 STATE_WARNING = "Warning"
