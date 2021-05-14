@@ -26,9 +26,6 @@ SCHEDULED_MAINT_INTERVAL_SEC = 1
 recent_backups = {}
 success_percent = {}
 
-
-#OPERATION_STATES = ["added", "deleted", "modified", "examined", "opened"]
-
 # Add prometheus wsgi middleware to route /metrics requests
 app.wsgi_app = DispatcherMiddleware(app.wsgi_app, {
     '/metrics': make_wsgi_app()

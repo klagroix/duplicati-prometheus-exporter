@@ -114,10 +114,12 @@ NOTE: This will conifgure Duplicati to send information about every backup to du
 To build this manually, run `docker build -t duplicati-prometheus-exporter .`
 
 
+## Known issues
+* NOTE this prometheus issue: https://github.com/prometheus/prometheus/issues/3746. Trying to exract a rate()/increase() with slowly changing data may be pretty inconsitent due to prometheus extrapolation.
+
+
 
 ### TODO list:
 * Add information about each metric exposed
 * Stop using debug webserver
 * Support duplicati login
-* Add example Grafana dashboard
-    * NOTE this prometheus issue: https://github.com/prometheus/prometheus/issues/3746. Trying to exract a rate()/increase() with slowly changing data may be pretty inconsitent due to prometheus extrapolation.
