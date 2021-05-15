@@ -3,7 +3,6 @@ Exposes prometheus metrics for reporting on Duplicati backup status
 
 ## Usage
 
-In order for duplicati-prometheus-exporter to function properly, two steps need to be executed:
 1. Run the container somewhere. I've provided examples for both Kubernetes and Docker below
 2. Configure Duplicati to send a json report to the docker container after every backup
 
@@ -108,6 +107,17 @@ NOTE: This will conifgure Duplicati to send information about every backup to du
     * If you're using the [Duplicati helm chart](https://artifacthub.io/packages/helm/k8s-at-home/duplicati) for Kubernetes, this will be `http://duplicati:8200` by default
 
 
+## Metrics
+
+| Metric                                             | Description                                                                                          | Labels            |
+|----------------------------------------------------|------------------------------------------------------------------------------------------------------|-------------------|
+| duplicati_backup_result_count                      | Count of backups that have ran                                                                       | backup, result    |
+| duplicati_backup_result_recent_gauge               | Number of backups that occurred in the last Xs. Resets to 0 if no recent backups or on initial start | backup, result    |
+| duplicati_backup_result_last_success_percent_gauge | Percentage of Success vs non-Success for the last known backup                                       | backup            |
+| duplicati_files_size                               | Size of added files (bytes - IEC)                                                                    | backup, operation |
+| duplicati_backup_duration                          | How long the backup operation was running for (seconds)                                              | backup, result    |
+
+
 
 ## Build
 
@@ -120,6 +130,4 @@ To build this manually, run `docker build -t duplicati-prometheus-exporter .`
 
 
 ### TODO list:
-* Add information to README.md about each metric exposed
-* Stop using debug webserver
 * Support duplicati login
