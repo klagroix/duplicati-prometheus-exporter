@@ -111,13 +111,13 @@ NOTE: This will conifgure Duplicati to send information about every backup to du
 
 ## Metrics
 
-| Metric                                             | Description                                                                                          | Labels            |
-|----------------------------------------------------|------------------------------------------------------------------------------------------------------|-------------------|
-| duplicati_backup_result_count                      | Count of backups that have ran                                                                       | backup, result    |
-| duplicati_backup_result_recent_gauge               | Number of backups that occurred in the last Xs. Resets to 0 if no recent backups or on initial start | backup, result    |
-| duplicati_backup_result_last_success_percent_gauge | Percentage of Success vs non-Success for the last known backup                                       | backup            |
-| duplicati_files_size                               | Size of added files (bytes - IEC)                                                                    | backup, operation |
-| duplicati_backup_duration                          | How long the backup operation was running for (seconds)                                              | backup, result    |
+| Metric                                               | Description                                                                                          | Labels                |
+|------------------------------------------------------|------------------------------------------------------------------------------------------------------|-----------------------|
+| `duplicati_backup_result_count`                      | Count of backups that have ran                                                                       | `backup`, `result`    |
+| `duplicati_backup_result_recent_gauge`               | Number of backups that occurred in the last Xs. Resets to 0 if no recent backups or on initial start | `backup`, `result`    |
+| `duplicati_backup_result_last_success_percent_gauge` | Percentage of Success vs non-Success for the last known backup                                       | `backup`              |
+| `duplicati_files_size`                               | Size of added files (bytes - IEC)                                                                    | `backup`, `operation` |
+| `duplicati_backup_duration`                          | How long the backup operation was running for (seconds)                                              | `backup`, `result`    |
 
 
 
