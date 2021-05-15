@@ -1,6 +1,8 @@
 # duplicati-prometheus-exporter
 Exposes prometheus metrics for reporting on Duplicati backup status
 
+Docker image is available from https://hub.docker.com/r/lagroix/duplicati-prometheus-exporter
+
 ## Usage
 
 1. Run the container somewhere. I've provided examples for both Kubernetes and Docker below
@@ -125,7 +127,7 @@ To build this manually, run `docker build -t duplicati-prometheus-exporter .`
 
 
 ## Known issues
-* NOTE this prometheus issue: https://github.com/prometheus/prometheus/issues/3746. Trying to exract a rate()/increase() with slowly changing data may be pretty inconsitent due to prometheus extrapolation.
+* NOTE this prometheus issue: https://github.com/prometheus/prometheus/issues/3746. Trying to extract a rate()/increase() with slowly changing data may be pretty inconsitent due to prometheus extrapolation.
 
 
 
