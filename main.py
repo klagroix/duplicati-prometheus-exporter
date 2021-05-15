@@ -111,6 +111,11 @@ def determine_duration_sec(duration_str):
     if duration_str is None:
         return None
 
+    duration_str, ms = duration_str.split(".")
+    # if ms > 6 characters, truncate. %f doesn't support more than 6 and we don't care about that granularity
+    ms = (ms[:6]) if len(ms) > 6 else ms
+    duration_str = "{0}.{1}".format(duration_str, ms)
+
     try:
         duration_time = datetime.datetime.strptime(duration_str, date_format)
     except ValueError:
