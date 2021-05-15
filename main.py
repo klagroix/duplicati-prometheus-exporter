@@ -5,7 +5,7 @@
 from flask import Flask, request
 from flask_apscheduler import APScheduler
 from werkzeug.middleware.dispatcher import DispatcherMiddleware
-from prometheus_client import make_wsgi_app, Counter, Gauge
+from prometheus_client import make_wsgi_app, Counter, Gauge, Summary
 import duplicati_client
 import os
 import datetime
@@ -37,6 +37,7 @@ result_recent_gauge = Gauge('duplicati_backup_result_recent_gauge', "Count of ba
 result_last_success_percent_gauge = Gauge('duplicati_backup_result_last_success_percent_gauge', "Percentage of Success vs non-Success for the last known backup".format(RECENT_BACKUP_AGE_SEC), ['backup'])
 files_gauge = Gauge('duplicati_files', 'Number of added files', ['backup', 'operation'])
 files_size_gauge = Gauge('duplicati_files_size', 'Size of added files', ['backup', 'operation'])
+duration_summary = Summary('duplicati_backup_duration', 'How long the backup operation was running for', ['backup', 'result'])
 
 
 def get_json_value(obj, key, default=None):
@@ -102,6 +103,26 @@ def maintain_recent_backups():
                     if backup_time < datetime.datetime.utcnow()-datetime.timedelta(seconds=RECENT_BACKUP_AGE_SEC):
                         backup_state.remove(backup_time)
 
+def determine_duration_sec(duration_str):
+    """Convert duration from string (ex: "00:00:04.4392890") to seconds"""
+
+    date_format = "%H:%M:%S.%f"
+
+    if duration_str is None:
+        return None
+
+    try:
+        duration_time = datetime.datetime.strptime(duration_str, date_format)
+    except ValueError:
+        print("ERROR: Unrecognized format for Duration. Got: {0}, expected format: {1}".format(duration_str, date_format))
+        return None
+    except:
+        print("ERROR: Caught unknown exception while processing duration: {0}".format(duration_str))
+        return None
+    
+    delta = duration_time - datetime.datetime(1900, 1, 1)
+    return delta.total_seconds()
+
 
 @app.route('/', methods=['POST'])
 def main():
@@ -115,6 +136,7 @@ def main():
     # Extract values
     backup_name = get_json_value(extra, 'backup-name')
     result = get_json_value(data, 'ParsedResult')
+    duration_sec = determine_duration_sec(get_json_value(data, 'Duration'))
 
     # Minimum required fields
     if backup_name is None and result is None:
@@ -142,6 +164,10 @@ def main():
     
     files_gauge.labels(backup=backup_name, operation='opened').set(int(get_json_value(data, 'OpenedFiles', default=0)))
     files_size_gauge.labels(backup=backup_name, operation='opened').set(int(get_json_value(data, 'SizeOfOpenedFiles', default=0)))
+
+    # Backup duration
+    if duration_sec is not None:
+        duration_summary.labels(backup=backup_name, result=result).observe(duration_sec)
 
     init_gauge_callbacks(backup_name, result)
     recent_backups[backup_name][result].append(datetime.datetime.utcnow())
