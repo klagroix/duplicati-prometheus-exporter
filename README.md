@@ -121,6 +121,5 @@ To build this manually, run `docker build -t duplicati-prometheus-exporter .`
 
 ### TODO list:
 * Add information to README.md about each metric exposed
-* Add backup duration
 * Stop using debug webserver
 * Support duplicati login
